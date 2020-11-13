@@ -1,9 +1,11 @@
 #!/bin/sh
 
 # This script must be run as root user [uid 0]
-# as it writes to the the deny file /etc/hosts.deny
+# as it writes to the the deny file
 #
-# JWG OCT 2020
+# Script detects unauthorised attempts to access
+# Bans the clowns by adding an entry to /etc/hosts.deny file
+# JWG NOV 2020
 
 if [ `whoami` != "root" ]; then
     echo "Script requires root privileges to perform correctly."
@@ -15,13 +17,13 @@ block_table="/root/ssh-scan-blocked-table"
 authlog_path="/var/log/syslog"
 white_list="127.0.0.1"
 
-# get the IPs of people trying illegal users from syslog
+# get the IPs of people trying to masquerade as invalid users from syslog
 infected_list=$(awk '/authentication failure/ { print $12 }' $authlog_path | cut -c7-99)
 
-# We want unique IPs
+# We require unique IP addresses
 infected_list=$(echo "$infected_list" | sort | uniq)
 
-# Grab already blocked IPs
+# Grab those IP addresses that have already been blocked
 blocked=$(cat $block_table)
 
 for infected in $infected_list; do
@@ -31,21 +33,19 @@ for infected in $infected_list; do
 
                 echo $blocked | grep $infected > /dev/null
                 if [ $? != 0 ]; then
-                        echo -n "$(date '+%b %d %T'): Infected host detected $infected"
+                        echo -n "$(date '+%b %d %T'): Miscreant host detected $infected"
                         echo -n " - Adding IP Address to the blocked table: "
                         echo $infected
                         echo $infected >> $block_table
 
 
                         # Whack the IP addresses in the /etc/hosts.deny file
-			# to stop the cretins from knocking on your door
+			# to stop the clowns from ever knocking on your door again
 			
 			echo "$infected"; echo "sshd: $infected" >> /etc/hosts.deny
-                        logger "Blatted IP address $infected on the head"
+                        logger "Unix/Linux $0 has been activated and blatted IP address $infected on the head"
 			echo "Restarting SSH service..."
 			sudo service ssh restart; sleep 1
                 fi
         fi
 done
-
-
