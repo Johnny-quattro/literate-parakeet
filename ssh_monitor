@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# This script must be run as root user [uid 0]
+# as it writes to the the deny file /etc/hosts.deny
+#
+# JWG OCT 2020
+
+if [ `whoami` != "root" ]; then
+    echo "Script requires root privileges to perform correctly."
+    echo "Please re-run this script as $(tput setaf 1)root$(tput sgr0)."
+	exit 1
+fi
+
+block_table="/root/ssh-scan-blocked-table"
+authlog_path="/var/log/syslog"
+white_list="127.0.0.1"
+
+# get the IPs of people trying illegal users from syslog
+infected_list=$(awk '/authentication failure/ { print $12 }' $authlog_path | cut -c7-99)
+
+# We want unique IPs
+infected_list=$(echo "$infected_list" | sort | uniq)
+
+# Grab already blocked IPs
+blocked=$(cat $block_table)
+
+for infected in $infected_list; do
+
+        echo $white_list | grep -v $infected > /dev/null
+        if [ $? = 0 ]; then
+
+                echo $blocked | grep $infected > /dev/null
+                if [ $? != 0 ]; then
+                        echo -n "$(date '+%b %d %T'): Infected host detected $infected"
+                        echo -n " - Adding IP Address to the blocked table: "
+                        echo $infected
+                        echo $infected >> $block_table
+
+
+                        # Whack the IP addresses in the /etc/hosts.deny file
+			# to stop the cretins from knocking on your door
+			
+			echo "$infected"; echo "sshd: $infected" >> /etc/hosts.deny
+                        logger "Blatted IP address $infected on the head"
+			echo "Restarting SSH service..."
+			sudo service ssh restart; sleep 1
+                fi
+        fi
+done
+
+
