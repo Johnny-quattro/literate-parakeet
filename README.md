@@ -8,6 +8,7 @@ In fact, the greatest impetus came directly from my HP C360 workstation running 
 I understand that most automated attacks just try to hit port 22 but some are more devious. I would certainly recommended changing the default port of 22 to something different. Script variant created solely for use on Raspberry Pi due to differing syslog format compared to Devuan
 
 Devuan-specific script: ssh_monitor
+
 Raspberry Pi-specific script: ssh_monitor_pi
 
 Recommended Usage: Run as a cron task every minute, although it can always be run manually from the shell prompt.
