@@ -14,4 +14,5 @@ Devuan-specific script: ssh_monitor
 Raspberry Pi-specific script: ssh_monitor_pi
 
 Recommended Usage: Run as a cron task every minute, although it can always be run manually from the shell prompt.
+
 Requires: file /root/ssh-scan-blocked-table (dealt with in script logic)
