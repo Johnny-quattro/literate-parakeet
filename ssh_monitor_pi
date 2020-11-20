@@ -13,7 +13,7 @@ if [ `whoami` != "root" ]; then
 	exit 1
 fi
 
-# Check to see if the scan block tables exists, and if not, create it
+# Check to see if the scan block table exists, and if not, create it
 test -f /root/ssh-scan-blocked-table || sudo touch /root/ssh-scan-blocked-table
 
 # Set requisite variables
@@ -30,7 +30,6 @@ infected_list=$(echo "$infected_list" | sort | uniq)
 
 # Grab those IP addresses that have already been blocked
 blocked=$(cat $block_table)
-
 for infected in $infected_list; do
 
         echo $white_list | grep -v $infected > /dev/null
@@ -39,7 +38,7 @@ for infected in $infected_list; do
                 echo $blocked | grep $infected > /dev/null
                 if [ $? != 0 ]; then
                         echo -n "$(date '+%b %d %T'): Miscreant host detected $infected"
-                        echo -n " - Adding IP Address to the blocked table: "
+                        echo -n " - Adding IP Address to the blocked hosts table: "
                         echo $infected
                         echo $infected >> $block_table
 
