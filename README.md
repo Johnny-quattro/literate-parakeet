@@ -2,8 +2,7 @@
 This is a rather boring text file detailing nothing in particular. This repo will be added to and embellished in the near future.
 I intend to use this repo for Raspberry Pi projects, namely Pi4 and Pi400.
 
-====================================================================================================
-
+=====================================================================================
 The script 'ssh_monitor' was built over a period of time, after encountering many brute-force attacks on my Linux/Unix machines.
 In fact, the greatest impetus came directly from my HP C360 workstation running HP-UX, which was being attacked relentlessly.
 
