@@ -49,7 +49,7 @@ for infected in $infected_list; do
 			echo "$infected"; echo "sshd: $infected" >> /etc/hosts.deny
                         logger "Unix/Linux $0 has been activated and blatted IP address $infected on the head"
 			echo "Restarting SSH service..."
-			sudo service ssh restart; sleep 1
+			service ssh restart; sleep 1
                 fi
         fi
 done
